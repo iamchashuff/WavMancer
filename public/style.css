@@ -1,0 +1,313 @@
+* {
+    color: rgb(232, 228, 145);
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url(./imgs/bkg-blue.png);
+    background-repeat: none;
+    background-size: cover;
+    color: rgb(232, 228, 145);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 40px;
+    transform: scale(1.5);
+}
+
+h1 {
+    font-family:'Lacquer', sans-serif;
+    font-size: 4rem;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 1.1rem;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 600px;
+    gap: 5px;
+    background-image: url(./imgs/wavmancer-favicon.png);
+    background-repeat: none;
+    background-size: cover;
+    background-position: center;
+    border: solid 4px rgba(59, 107, 219, 0.287);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.input-row {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+
+#enterinst {
+    font-size: 1rem;
+    margin: 0;
+}
+
+#url, #format {
+    font-size: 1.2rem;
+}
+
+#url {
+    flex: 1;
+    background-color: rgb(232, 228, 145);
+    color: rgb(27, 31, 41);
+    font-family: inherit; 
+    font-size: 1rem; 
+    line-height: normal;
+    padding: 10px; 
+    border: none; 
+    outline: none; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
+
+#url:focus {
+    border: 2px solid rgba(59, 107, 219, 0.8); /* Add a border on focus */
+    background-color: rgb(232, 228, 145); /* Slightly change background color */
+}
+
+#format {
+    width: 70px;
+    background-color: rgba(94, 134, 227, 0.247);
+}
+
+input, select, button {
+    margin-top: 10px;
+}
+
+option {
+    background-color: rgb(16, 36, 81);
+    color: rgb(232, 228, 145);
+}
+
+#instructions {
+    font-size: 1.1rem;
+    margin-top: 10px;
+}
+
+#convert-btn {
+    width: 175px;
+    height: 50px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    background-color: rgb(3, 11, 30);
+    color: rgb(180, 0, 0);
+    background-repeat: none;
+    background-size: cover;
+    background-position: center;
+    border: solid 2px rgb(180, 0, 0);
+    border-radius: 10px;
+    margin-top: 0px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effects */
+}
+
+#convert-btn:hover {
+    transform: scale(1.1); /* Slightly enlarge the button */
+    box-shadow: 0 0 20px 5px rgba(59, 107, 219, 0.8); /* Add a glowing effect */
+    animation: summon-glow 1s infinite; /* Trigger the animation */
+}
+
+@keyframes summon-glow {
+    0% {
+        box-shadow: 0 0 10px 2px rgba(59, 107, 219, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px 5px rgba(59, 107, 219, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 10px 2px rgba(59, 107, 219, 0.5);
+    }
+}
+
+/* Full-screen overlay */
+#summoning-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9); /* Darker background for a mystical feel */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden; /* Hidden by default */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Show the overlay */
+  #summoning-overlay.active {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  /* Outer summoning circle */
+  .summoning-circle {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border: 5px solid rgba(232, 228, 145, 0.5);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 20px rgba(232, 228, 145, 0.8), 0 0 40px rgba(232, 228, 145, 0.6);
+  }
+  
+  /* Inner glowing circle */
+  .inner-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(232, 228, 145, 0.8);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: glow 1.5s infinite alternate;
+  }
+  
+  /* Text inside the overlay */
+  #summoning-overlay p {
+    color: rgb(232, 228, 145);
+    font-size: 1.5rem;
+    font-family: 'Lacquer', sans-serif;
+    text-align: center;
+    margin-top: 20px;
+    animation: fadeIn 2s infinite alternate;
+  }
+  
+  /* Keyframes for pulsating circle */
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 20px rgba(232, 228, 145, 0.8), 0 0 40px rgba(232, 228, 145, 0.6);
+    }
+    50% {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(232, 228, 145, 1), 0 0 60px rgba(232, 228, 145, 0.8);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 20px rgba(232, 228, 145, 0.8), 0 0 40px rgba(232, 228, 145, 0.6);
+    }
+  }
+  
+  /* Keyframes for glowing inner circle */
+  @keyframes glow {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      box-shadow: 0 0 10px rgba(232, 228, 145, 0.8), 0 0 20px rgba(232, 228, 145, 0.6);
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1.2);
+      box-shadow: 0 0 20px rgba(232, 228, 145, 1), 0 0 40px rgba(232, 228, 145, 0.8);
+    }
+  }
+  
+  /* Keyframes for fading text */
+  @keyframes fadeIn {
+    0% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+/* General styles remain unchanged */
+
+/* Media query for tablets and smaller screens */
+@media (max-width: 768px) {
+    .container {
+        transform: scale(1); /* Reset scaling for smaller screens */
+        padding: 20px; /* Reduce padding */
+        gap: 5px; /* Reduce spacing between elements */
+    }
+
+    h1 {
+        font-size: 3rem; /* Reduce font size for headings */
+    }
+
+    h2 {
+        font-size: 1rem; /* Adjust subheading size */
+    }
+
+    .input-group {
+        width: 100%; /* Make the input group take full width */
+        padding: 10px; /* Reduce padding */
+    }
+
+    #url {
+        font-size: 1rem; /* Adjust input font size */
+    }
+
+    #format {
+        width: 80px; /* Slightly increase dropdown width for usability */
+    }
+
+    #convert-btn {
+        width: 150px; /* Reduce button width */
+        height: 45px; /* Reduce button height */
+        font-size: 1rem; /* Adjust button font size */
+    }
+}
+
+/* Media query for mobile screens */
+@media (max-width: 480px) {
+    .container {
+        transform: scale(1); /* Scale down further for smaller screens */
+        padding: 10px;
+        gap: 5px;
+    }
+
+    h1 {
+        font-size: 4rem; /* Further reduce font size */
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    .input-group {
+        width: 100%;
+        padding: 15px;
+    }
+
+    #url {
+        font-size: 0.9rem;
+    }
+
+    #format {
+        width: 70px;
+    }
+
+    #convert-btn {
+        width: 140px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WavMancer</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="./imgs/wavmancer-favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Lacquer&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>WavMancer</h1>
+        <h2>YT to MP3/WAV Converter</h2>
+        <div class="input-group">
+            <p id="enterinst">Paste your link below!</p>
+            <div class="input-row">         
+                <input type="text" id="url" placeholder="https://www.youtube.com/eX@MpL3" />
+                <select id="format">
+                    <option value="mp3">MP3</option>
+                    <option value="wav">WAV</option>
+                </select>
+            </div>
+        </div> 
+        <p id="instructions">Click below to summon your new audio file!</p>
+        <button id="convert-btn">SUMMON</button>
+        <p id="status"></p>
+    </div>
+    <div id="summoning-overlay">
+        <div class="summoning-circle">
+          <div class="inner-circle"></div>
+        </div>
+        <p>Summoning in progress...</p>
+      </div>
+
+    <script src="script.js"></script>
+    </body>
+</html>
