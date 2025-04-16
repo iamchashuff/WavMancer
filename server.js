@@ -6,94 +6,84 @@ const fs = require('fs');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const DOWNLOADS_DIR = path.join(__dirname, 'downloads');
 
-app.use(cors({
-  origin: ['http://localhost:3000', 'https://wavmancer.com'], // Allow both localhost and production domains
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
-
- // Handling preflight OPTIONS requests
-app.options('*', cors()); // Responds to OPTIONS requests
-
-app.use(express.static('public'));
+// Enable CORS and JSON parsing
+app.use(cors());
 app.use(express.json());
+
+// Serve static files from the "public" directory
+app.use(express.static('public'));
+
+// Route for the root URL
+app.get('/', (req, res) => {
+  res.send('Welcome to WavMancer!');
+});
 
 app.post('/convert', (req, res) => {
   const { url, format } = req.body;
 
-  // Step 1: Get title and uploader
+  if (!url || !format) {
+    return res.status(400).json({ message: 'URL and format are required.' });
+  }
+
   exec(`yt-dlp --skip-download --print "%(title)s||%(uploader)s" "${url}"`, (metaErr, metaStdout) => {
     if (metaErr) {
       console.error('Error fetching metadata:', metaErr);
-      return res.status(500).json({ message: 'Error fetching metadata' });
+      return res.status(500).json({ message: 'Error fetching metadata', error: metaErr.message });
     }
 
     let [title, artist] = metaStdout.trim().split('||');
     title = title || 'UnknownTitle';
     artist = artist || 'UnknownArtist';
 
-    // Sanitize the strings to make safe filenames
-    const safeTitle = title.replace(/[<>:"/\\|?*]+/g, '').trim();
-    const safeArtist = artist.replace(/[<>:"/\\|?*]+/g, '').trim();
+    const truncate = (str, maxLength) => str.length > maxLength ? str.slice(0, maxLength) : str;
+    const safeTitle = truncate(title.replace(/[<>:"/\\|?*]+/g, '').trim(), 50);
+    const safeArtist = truncate(artist.replace(/[<>:"/\\|?*]+/g, '').trim(), 50);
     const baseName = `WM-${safeTitle}-${safeArtist}`;
 
-    const outputTemplate = path.join(__dirname, 'downloads', baseName + '.%(ext)s');
+    const outputTemplate = path.join(DOWNLOADS_DIR, baseName + '.%(ext)s');
     console.log('Output template:', outputTemplate);
 
-    // Step 2: Download and convert
     exec(`yt-dlp -x --audio-format ${format} -o "${outputTemplate}" "${url}"`, (err, stdout, stderr) => {
       if (err) {
         console.error('Error during conversion:', err);
-        if (!res.headersSent) {
-          return res.status(500).json({ message: 'Error during conversion' });
-        }
-        return;
+        return res.status(500).json({ message: 'Error during conversion', error: stderr });
       }
 
-      // Dynamically locate the converted file
-      fs.readdir(path.join(__dirname, 'downloads'), (readErr, files) => {
+      fs.readdir(DOWNLOADS_DIR, (readErr, files) => {
         if (readErr) {
           console.error('Error reading downloads directory:', readErr);
           return res.status(500).send('Error reading downloads directory.');
         }
-
+      
+        console.log('Files in downloads directory:', files);
+      
         const matchingFile = files.find(file => file.startsWith(baseName));
         if (!matchingFile) {
           console.error('Converted file not found:', baseName);
           return res.status(500).send('File not found after conversion.');
         }
-
-        const finalFile = path.join(__dirname, 'downloads', matchingFile);
-
-        // Manually set headers and send the file
+      
+        const finalFile = path.join(DOWNLOADS_DIR, matchingFile);
+        console.log('Final file located:', finalFile);
+      
         res.setHeader('Content-Disposition', `attachment; filename="${baseName}.${format}"`);
         res.setHeader('Content-Type', 'application/octet-stream');
-
         res.sendFile(finalFile, (sendErr) => {
           if (sendErr) {
             console.error('Error sending file:', sendErr);
-            if (!res.headersSent) res.status(500).send('Error downloading the file.');
+            res.status(500).send('Error downloading the file.');
           } else {
-            console.log('File sent successfully or request was aborted.');
+            console.log('File sent successfully.');
           }
-
-          // Delete the file after sending
-          fs.unlink(finalFile, (unlinkErr) => {
-            if (unlinkErr) {
-              console.error('Error deleting file:', unlinkErr);
-            } else {
-              console.log('File deleted after download');
-            }
-          });
         });
       });
     });
   });
 });
 
-// ✅ This should be outside the route handler
+// Start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
