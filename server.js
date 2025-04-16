@@ -1,10 +1,14 @@
+const cors = require('cors');
+app.use(cors({ origin: 'https://wavmancer.com' }));
+
 const express = require('express');
 const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
 
 app.use(express.static('public'));
 app.use(express.json());

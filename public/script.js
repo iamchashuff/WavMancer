@@ -3,6 +3,7 @@ document.getElementById('convert-btn').addEventListener('click', async () => {
   const format = document.getElementById('format').value;
   const status = document.getElementById('status');
   const overlay = document.getElementById('summoning-overlay');
+  const BASE_URL = 'https://wavmancer-backend.onrender.com/'
 
   if (!url) {
     status.textContent = 'Please enter a YT URL.';
@@ -14,7 +15,7 @@ document.getElementById('convert-btn').addEventListener('click', async () => {
   status.textContent = 'Summoning...';
 
   try {
-    const response = await fetch('/convert', {
+    const response = await fetch('${BASE_URL}convert', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url, format })
