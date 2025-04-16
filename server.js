@@ -8,6 +8,10 @@ const app = express();
 const port = process.env.PORT || 3000;
 const DOWNLOADS_DIR = path.join(__dirname, 'downloads');
 
+if (!fs.existsSync(DOWNLOADS_DIR)) {
+  fs.mkdirSync(DOWNLOADS_DIR);
+}
+
 // Enable CORS and JSON parsing
 app.use(cors());
 app.use(express.json());
