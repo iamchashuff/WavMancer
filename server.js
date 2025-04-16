@@ -3,6 +3,7 @@ const cors = require('cors');
 const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const puppeteer = require('puppeteer');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -69,6 +70,22 @@ function findDownloadedFile(baseName) {
   });
 }
 
+// Helper function to ensure Chromium is available
+async function ensureChromiumCookies() {
+  try {
+    console.log('Launching Chromium...');
+    const browser = await puppeteer.launch({
+      headless: true, // Run in headless mode
+      args: ['--no-sandbox', '--disable-setuid-sandbox'], // Required for Render
+    });
+    console.log('Chromium launched successfully.');
+    await browser.close();
+  } catch (error) {
+    console.error('Error launching Chromium:', error);
+    throw new Error('Failed to launch Chromium.');
+  }
+}
+
 // Route for the root URL
 app.get('/', (req, res) => {
   res.send('Welcome to WavMancer!');
@@ -85,26 +102,29 @@ app.post('/convert', async (req, res) => {
   try {
     console.log('Received request with URL:', url, 'and format:', format);
 
-    // Step 1: Fetch metadata
+    // Step 1: Launch Chromium to ensure cookies are available
+    await ensureChromiumCookies();
+
+    // Step 2: Fetch metadata
     const { title, artist } = await fetchMetadata(url);
     console.log('Metadata fetched:', { title, artist });
 
-    // Step 2: Sanitize and prepare filenames
+    // Step 3: Sanitize and prepare filenames
     const safeTitle = sanitizeFilename(title);
     const safeArtist = sanitizeFilename(artist);
     const baseName = `WM-${safeTitle}-${safeArtist}`;
     const outputTemplate = path.join(DOWNLOADS_DIR, `${baseName}.%(ext)s`);
     console.log('Output template:', outputTemplate);
 
-    // Step 3: Download audio
+    // Step 4: Download audio
     await downloadAudio(url, format, outputTemplate);
     console.log('Audio downloaded successfully.');
 
-    // Step 4: Find the downloaded file
+    // Step 5: Find the downloaded file
     const finalFile = await findDownloadedFile(baseName);
     console.log('Final file located:', finalFile);
 
-    // Step 5: Send the file to the client
+    // Step 6: Send the file to the client
     res.setHeader('Content-Disposition', `attachment; filename="${baseName}.${format}"`);
     res.setHeader('Content-Type', 'application/octet-stream');
     res.sendFile(finalFile, (err) => {
