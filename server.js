@@ -3,7 +3,7 @@ const cors = require('cors');
 const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer'); // Ensure this is declared only once
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -71,15 +71,12 @@ function findDownloadedFile(baseName) {
 }
 
 // Helper function to ensure Chromium is available
-const puppeteer = require('puppeteer');
-
 async function ensureChromiumCookies() {
   try {
     console.log('Launching Chromium...');
     const browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'], // Required for Render
-      executablePath: puppeteer.executablePath(), // Use Puppeteer's downloaded Chromium
     });
     console.log('Chromium launched successfully.');
     await browser.close();
