@@ -75,8 +75,9 @@ async function ensureChromiumCookies() {
   try {
     console.log('Launching Chromium...');
     const browser = await puppeteer.launch({
-      headless: true, // Run in headless mode
-      args: ['--no-sandbox', '--disable-setuid-sandbox'], // Required for Render
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: '/usr/bin/google-chrome-stable', // Adjust this path if necessary
     });
     console.log('Chromium launched successfully.');
     await browser.close();
