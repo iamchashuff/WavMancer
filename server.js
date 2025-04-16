@@ -1,7 +1,5 @@
-const cors = require('cors');
-app.use(cors({ origin: 'https://wavmancer.com' }));
-
 const express = require('express');
+const cors = require('cors');
 const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
@@ -9,6 +7,15 @@ const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://wavmancer.com'], // Allow both localhost and production domains
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
+ // Handling preflight OPTIONS requests
+app.options('*', cors()); // Responds to OPTIONS requests
 
 app.use(express.static('public'));
 app.use(express.json());
